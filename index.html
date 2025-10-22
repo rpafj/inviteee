@@ -8,11 +8,15 @@
 <body>
     <div class="invitation-container">
         <div class="invitation-content">
-            <h1>Convite para Jantar no Sabado</h1>
-            <p>Convidada : Thayná(thayutaa) ribeiro</p>
-            <p><strong>Data:</strong> 09 de agosto (a data pode ser alterada caso nao seja possivel)</p>
+            <h4>Convite para Jantar no fim de semana</h4>
+            <p><span style="font-size: 24px;">Dra Rebeca</span> que vai superar Ruy palhano e outras figuras do universo psiquiátrico em slz </p>
+
             <p><strong>Horário:</strong> 20:00</p>
-            <p><strong>Local:</strong> FERRERO ou Bonnie pizzaria</p>
+            <p><strong>Local:</strong> Pier massari</p>
+            <div class="buttons-container">
+                <button class="btn-accept">Aceitar</button>
+                <button class="btn-decline">Não aceitar</button>
+            </div>
         </div>
     </div>
     <style>
@@ -22,19 +26,16 @@
             padding: 0;
         }
         .invitation-container {
-            background-image: url('test5.jpeg');
-            background-size: cover;
-            background-position: center;
+            background-color: white;
             width: 100vw;
             height: 100vh;
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             justify-content: center;
-            padding-bottom: 60px;
         }
         .invitation-content {
             /* background: rgba(255, 255, 255, 0.8); */
-            padding: 40px 60px;
+            padding: 30px 30px;
             border-radius: 16px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.2);
             text-align: center;
@@ -47,6 +48,114 @@
             margin: 12px 0;
             font-size: 1.2em;
         }
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+            align-items: stretch;
+        }
+        .buttons-container button {
+            flex-shrink: 0;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        .buttons-container button:hover {
+            opacity: 0.8;
+        }
+        .btn-accept {
+            background-color: green;
+        }
+        .btn-decline {
+            background-color: red;
+            width: 140px;
+            height: 90px;
+            position: relative;
+            transition: transform 0.1s ease-out;
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const acceptBtn = document.querySelector('.btn-accept');
+            const declineBtn = document.querySelector('.btn-decline');
+            let currentX = 0;
+            let currentY = 0;
+            
+            // Accept button alert
+            acceptBtn.addEventListener('click', function() {
+                alert('Sabia escolha de uma sábia doutora, voce pode no sabado? se não podemos ir domingo');
+            });
+            
+            // Function to move the button
+            function moveButton() {
+                // Get button's current position and dimensions
+                const btnRect = declineBtn.getBoundingClientRect();
+                const btnWidth = btnRect.width;
+                const btnHeight = btnRect.height;
+                
+                // Calculate boundaries to keep button on screen
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                // Generate random position with constrained range
+                const moveRange = 200; // pixels to move each time
+                const randomX = (Math.random() * moveRange * 2 - moveRange);
+                const randomY = (Math.random() * moveRange * 2 - moveRange);
+                
+                // Calculate new position
+                let newX = currentX + randomX;
+                let newY = currentY + randomY;
+                
+                // Get button's original position (center of content)
+                const contentRect = document.querySelector('.buttons-container').getBoundingClientRect();
+                const originalLeft = contentRect.left + (contentRect.width / 2) - (btnWidth / 2);
+                const originalTop = btnRect.top - currentY;
+                
+                // Constrain position to viewport with padding
+                const padding = 20;
+                const maxLeft = viewportWidth - btnWidth - padding;
+                const maxTop = viewportHeight - btnHeight - padding;
+                
+                const finalLeft = originalLeft + newX;
+                const finalTop = originalTop + newY;
+                
+                if (finalLeft < padding) newX = padding - originalLeft;
+                if (finalLeft > maxLeft) newX = maxLeft - originalLeft;
+                if (finalTop < padding) newY = padding - originalTop;
+                if (finalTop > maxTop) newY = maxTop - originalTop;
+                
+                // Update current position
+                currentX = newX;
+                currentY = newY;
+                
+                // Move the button smoothly and keep it there
+                declineBtn.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            }
+            
+            // Decline button movement on mouseenter (hover)
+            declineBtn.addEventListener('mouseenter', function(e) {
+                e.preventDefault();
+                moveButton();
+            });
+            
+            // Decline button movement on mousedown (backup)
+            declineBtn.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                moveButton();
+            });
+            
+            // This alert will probably never trigger ;)
+            declineBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Você conseguiu recusar! Mas... você tem certeza? 😢');
+            });
+        });
+    </script>
 </body>
 </html>
