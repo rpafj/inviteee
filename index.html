@@ -88,10 +88,10 @@
             let currentY = 0;
             
             // Accept button alert
-            acceptBtn.addEventListener('click', function() {
-                alert('o esperado de alguem chamado raphaelA, jantaremos na segunda semana de novembro assim que eu entregar meu tcc');
+            acceptBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('continue tentando elarapha');
             });
-            
             // Function to move the button
             function moveButton() {
                 // Get button's current position and dimensions
@@ -151,9 +151,9 @@
             });
             
             // This alert will probably never trigger ;)
-            declineBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('continue tentando elarapha');
+        
+              declineBtn.addEventListener('click', function(e) {
+                alert('não esperava menos da minha da pessoa mais raphaela que ja conheci, jantaremos na segunda semana de novembro assim que eu entregar meu tcc');
             });
         });
     </script>
