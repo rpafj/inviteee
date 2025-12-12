@@ -1,161 +1,192 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Convite</title>
 </head>
 <body>
-    <div class="invitation-container">
-        <div class="invitation-content">
-            <!-- <h4>Convite para Jantar no fim de semana</h4> -->
-            <!-- <p><span style="font-size: 24px;">Dra Rebeca</span> que vai superar Ruy palhano e outras figuras do universo psiquiátrico em slz </p> -->
+  <div class="invitation-container">
+    <div class="invitation-content">
+      <h2>Convite para um jantar </h2>
+      <p>
+        Isabelle, eu queria te conhecer melhor. Na academia sempre fica aquela conversa rápida entre uma série e outra. 
+      </p>
+      <p><strong>Horário:</strong> 19:30 sabado ou domingo</p>
+      <p><strong>Local:</strong> Pier Massari</p>
 
-            <!-- <p><strong>Horário:</strong> 20:00</p> -->
-            <!-- <p><strong>Local:</strong> Pier massari</p> -->
-            <div class="buttons-container">
-                <button class="btn-accept">Aceitar</button>
-                <button class="btn-decline">Não aceitar</button>
-            </div>
-        </div>
+      <div class="buttons-container">
+        <button class="btn-accept" type="button">Aceitar</button>
+        <button class="btn-decline" type="button" tabindex="-1" aria-disabled="true">
+          Não aceitar
+        </button>
+      </div>
+      <p>by raphael portela de araujo jansen ferreira</p>
+
     </div>
-    <style>
-        body, html {
-            height: 100%;   
-            margin: 0;
-            padding: 0;
+  </div>
+
+  <style>
+    body, html { height: 100%; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    .invitation-container {
+      background-color: white;
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .invitation-content {
+      padding: 30px 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+      text-align: center;
+      width: min(520px, 92vw);
+    }
+    .invitation-content h2 { margin: 0 0 12px; font-size: 2em; }
+    .invitation-content p { margin: 10px 0; font-size: 1.1em; }
+    .hint { display: block; margin-top: 14px; opacity: 0.75; }
+
+    .buttons-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 26px;
+      align-items: stretch;
+      position: relative;
+    }
+    .buttons-container button {
+      padding: 12px 18px;
+      font-size: 1.05em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .buttons-container button:hover { opacity: 0.9; }
+
+    .btn-accept { background-color: #1f8a3b; }
+
+    .btn-decline {
+      background-color: #d61f1f;
+      width: 160px;
+      height: 80px;
+      margin: 0 auto;
+      position: relative;
+      transition: transform 0.12s ease-out;
+      touch-action: manipulation;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const acceptBtn = document.querySelector(".btn-accept");
+      const declineBtn = document.querySelector(".btn-decline");
+      const container = document.querySelector(".invitation-container");
+
+      let currentX = 0;
+      let currentY = 0;
+
+      acceptBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("Boa 😄 Te mando os detalhes!");
+      });
+
+      function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+      function moveButtonAwayFrom(pointerX, pointerY) {
+        const btnRect = declineBtn.getBoundingClientRect();
+        const btnW = btnRect.width;
+        const btnH = btnRect.height;
+
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const padding = 16;
+
+        // Centro atual do botão (com transform aplicado)
+        const btnCenterX = btnRect.left + btnW / 2;
+        const btnCenterY = btnRect.top + btnH / 2;
+
+        // Vetor "fuga" (do ponteiro para o botão)
+        let dx = btnCenterX - pointerX;
+        let dy = btnCenterY - pointerY;
+
+        // Se estiver exatamente em cima, cria direção aleatória
+        if (dx === 0 && dy === 0) { dx = (Math.random() - 0.5); dy = (Math.random() - 0.5); }
+
+        // Normaliza e aplica um passo maior
+        const len = Math.hypot(dx, dy) || 1;
+        const step = 220;
+        dx = (dx / len) * step;
+        dy = (dy / len) * step;
+
+        // Atualiza offsets
+        let newX = currentX + dx;
+        let newY = currentY + dy;
+
+        // Constrói limites para manter na tela
+        // Base: posição "original" do botão (sem transform)
+        const originalLeft = btnRect.left - currentX;
+        const originalTop  = btnRect.top  - currentY;
+
+        const minLeft = padding;
+        const minTop = padding;
+        const maxLeft = vw - btnW - padding;
+        const maxTop = vh - btnH - padding;
+
+        // Aplica clamp no destino final (original + transform)
+        const finalLeft = originalLeft + newX;
+        const finalTop = originalTop + newY;
+
+        newX = clamp(newX, minLeft - originalLeft, maxLeft - originalLeft);
+        newY = clamp(newY, minTop - originalTop, maxTop - originalTop);
+
+        currentX = newX;
+        currentY = newY;
+        declineBtn.style.transform = `translate(${currentX}px, ${currentY}px)`;
+      }
+
+      // Torna "impossível" clicar: bloqueia qualquer click/press e foge antes
+      const blockEvents = ["click", "mousedown", "mouseup", "pointerdown", "pointerup", "touchstart", "touchend"];
+      blockEvents.forEach((evt) => {
+        declineBtn.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const x = (e.touches && e.touches[0]?.clientX) ?? e.clientX ?? (window.innerWidth / 2);
+          const y = (e.touches && e.touches[0]?.clientY) ?? e.clientY ?? (window.innerHeight / 2);
+          moveButtonAwayFrom(x, y);
+        }, { passive: false });
+      });
+
+      // Foge quando o cursor chega perto (mesmo sem "hover" direto)
+      container.addEventListener("mousemove", (e) => {
+        const r = declineBtn.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+
+        if (dist < 140) {
+          moveButtonAwayFrom(e.clientX, e.clientY);
         }
-        .invitation-container {
-            background-color: white;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+      });
+
+      // Em mobile: qualquer toque na tela perto do botão faz ele fugir
+      container.addEventListener("touchstart", (e) => {
+        const t = e.touches[0];
+        if (!t) return;
+
+        const r = declineBtn.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(t.clientX - cx, t.clientY - cy);
+
+        if (dist < 180) {
+          e.preventDefault();
+          moveButtonAwayFrom(t.clientX, t.clientY);
         }
-        .invitation-content {
-            /* background: rgba(255, 255, 255, 0.8); */
-            padding: 30px 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        .invitation-content h1 {
-            margin-top: 0;
-            font-size: 2.5em;
-        }
-        .invitation-content p {
-            margin: 12px 0;
-            font-size: 1.2em;
-        }
-        .buttons-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 30px;
-            align-items: stretch;
-        }
-        .buttons-container button {
-            flex-shrink: 0;
-            padding: 12px 30px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            color: white;
-            font-weight: bold;
-            transition: opacity 0.3s;
-        }
-        .buttons-container button:hover {
-            opacity: 0.8;
-        }
-        .btn-accept {
-            background-color: green;
-        }
-        .btn-decline {
-            background-color: red;
-            width: 140px;
-            height: 90px;
-            position: relative;
-            transition: transform 0.1s ease-out;
-        }
-    </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const acceptBtn = document.querySelector('.btn-accept');
-            const declineBtn = document.querySelector('.btn-decline');
-            let currentX = 0;
-            let currentY = 0;
-            
-            // Accept button alert
-            acceptBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('continue tentando elarapha');
-            });
-            // Function to move the button
-            function moveButton() {
-                // Get button's current position and dimensions
-                const btnRect = declineBtn.getBoundingClientRect();
-                const btnWidth = btnRect.width;
-                const btnHeight = btnRect.height;
-                
-                // Calculate boundaries to keep button on screen
-                const viewportWidth = window.innerWidth;
-                const viewportHeight = window.innerHeight;
-                
-                // Generate random position with constrained range
-                const moveRange = 200; // pixels to move each time
-                const randomX = (Math.random() * moveRange * 2 - moveRange);
-                const randomY = (Math.random() * moveRange * 2 - moveRange);
-                
-                // Calculate new position
-                let newX = currentX + randomX;
-                let newY = currentY + randomY;
-                
-                // Get button's original position (center of content)
-                const contentRect = document.querySelector('.buttons-container').getBoundingClientRect();
-                const originalLeft = contentRect.left + (contentRect.width / 2) - (btnWidth / 2);
-                const originalTop = btnRect.top - currentY;
-                
-                // Constrain position to viewport with padding
-                const padding = 20;
-                const maxLeft = viewportWidth - btnWidth - padding;
-                const maxTop = viewportHeight - btnHeight - padding;
-                
-                const finalLeft = originalLeft + newX;
-                const finalTop = originalTop + newY;
-                
-                if (finalLeft < padding) newX = padding - originalLeft;
-                if (finalLeft > maxLeft) newX = maxLeft - originalLeft;
-                if (finalTop < padding) newY = padding - originalTop;
-                if (finalTop > maxTop) newY = maxTop - originalTop;
-                
-                // Update current position
-                currentX = newX;
-                currentY = newY;
-                
-                // Move the button smoothly and keep it there
-                declineBtn.style.transform = `translate(${currentX}px, ${currentY}px)`;
-            }
-            
-            // Decline button movement on mouseenter (hover)
-            declineBtn.addEventListener('mouseenter', function(e) {
-                e.preventDefault();
-                moveButton();
-            });
-            
-            // Decline button movement on mousedown (backup)
-            declineBtn.addEventListener('mousedown', function(e) {
-                e.preventDefault();
-                moveButton();
-            });
-            
-            // This alert will probably never trigger ;)
-        
-              declineBtn.addEventListener('click', function(e) {
-                alert('não esperava menos da minha da pessoa mais raphaela que ja conheci, jantaremos na segunda semana de novembro assim que eu entregar meu tcc');
-            });
-        });
-    </script>
+      }, { passive: false });
+    });
+  </script>
 </body>
 </html>
